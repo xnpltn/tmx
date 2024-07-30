@@ -2,7 +2,9 @@ package application
 
 import (
 	"context"
+	"embed"
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -19,17 +21,19 @@ import (
 var _ core.App = (*app)(nil)
 
 type app struct {
-	router *echo.Echo
-	db     *gorm.DB
-	port   uint64
+	router      *echo.Echo
+	db          *gorm.DB
+	port        uint64
+	staticFiles embed.FS
 }
 
 // creates new app
-func New(port uint64) *app {
+func New(port uint64, staticFiles embed.FS) *app {
 	return &app{
-		router: echo.New(),
-		db:     database.DB(),
-		port:   port,
+		router:      echo.New(),
+		db:          database.DB(),
+		port:        port,
+		staticFiles: staticFiles,
 	}
 }
 
@@ -39,6 +43,13 @@ func (a *app) Start(ctx context.Context) error {
 		Handler: a.router,
 		Addr:    fmt.Sprintf(":%d", a.port),
 	}
+	static, err := fs.Sub(a.staticFiles, "static")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	a.router.GET("/static/*", echo.WrapHandler(http.StripPrefix("/static", http.FileServer(http.FS(static)))))
+	loadUIRoutes(a)
 	errChan := make(chan error, 1)
 	go func() {
 		log.Println("Server listening on port: ", a.port)
@@ -53,6 +64,7 @@ func (a *app) Start(ctx context.Context) error {
 		err := <-errChan
 		return err
 	case <-ctx.Done():
+		// graceful termination
 		err := a.Shutdown(&server)
 		if err != nil {
 			log.Println("Failed to gracefully shutdown the server")

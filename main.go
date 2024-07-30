@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"embed"
 	"flag"
 	"log"
 	"os"
@@ -15,6 +16,11 @@ var (
 	port     uint64
 	sqliteDb string
 )
+
+// static files
+
+//go:embed all:static
+var staticAssets embed.FS
 
 // init function runs before main
 func init() {
@@ -33,7 +39,7 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
 	defer cancel()
 
-	app := application.New(port)
+	app := application.New(port, staticAssets)
 	if err := app.Start(ctx); err != nil {
 		log.Fatal(err)
 	}
