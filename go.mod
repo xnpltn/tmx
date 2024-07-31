@@ -1,4 +1,4 @@
-module speadshets/spdb
+module spreadsheet/spdb
 
 go 1.22.4
 

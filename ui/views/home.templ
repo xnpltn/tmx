@@ -1,5 +1,12 @@
 package views
 
+import (
+"spreadsheet/spdb/ui/components"
+)
+
 templ HomeView() {
 <h1>Home </h1>
+<div class="flex items-center justify-center gap-3">
+  @components.WorkspaceContainer()
+</div>
 }

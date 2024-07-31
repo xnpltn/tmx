@@ -8,8 +8,8 @@ import (
 	"os"
 	"os/signal"
 
-	"speadshets/spdb/application"
-	"speadshets/spdb/database"
+	"spreadsheet/spdb/application"
+	"spreadsheet/spdb/database"
 )
 
 var (

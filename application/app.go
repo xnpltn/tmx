@@ -10,8 +10,8 @@ import (
 	"os"
 	"time"
 
-	"speadshets/spdb/core"
-	"speadshets/spdb/database"
+	"spreadsheet/spdb/core"
+	"spreadsheet/spdb/database"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"

@@ -14,6 +14,9 @@ templ Layout(layoutPath string) {
 </head>
 
 <body class="">
+  <a hx-get="/edit/hello" hx-target="#view" hx-trigger="click" hx-push-url="true"
+    class="nav-button bg-blue-200">Edit</a>
+  <a hx-get="/" hx-target="#view" hx-trigger="click" hx-push-url="true" class="nav-button bg-blue-200">Home</a>
   <main id="view" hx-swap="innerHTML" hx-get={ layoutPath } hx-trigger="load" class="px-32"></main>
 </body>
 
