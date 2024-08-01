@@ -20,13 +20,13 @@ func RenderView(c echo.Context, view templ.Component, layoutPath string) error {
 }
 
 func HomePage(app core.App) echo.HandlerFunc {
-	var sheets []models.Sheet
-	res := app.DB().Find(&sheets)
-	if res.Error != nil {
-		fmt.Println(res.Error)
-	}
-	fmt.Println(len(sheets))
 	return func(c echo.Context) error {
+		var sheets []models.Sheet
+		res := app.DB().Find(&sheets)
+		if res.Error != nil {
+			fmt.Println(res.Error)
+		}
+		fmt.Println(len(sheets))
 		return RenderView(c, views.HomeView(sheets), "/")
 	}
 }

@@ -68,17 +68,10 @@ templ EditView(sheet models.Sheet) {
       this.rowName = rowName;
       this.columnName = columnName;
       this.name = `${this.columnName}${this.rowName}`;
-      this.sheetID = undefined
-
-
+      this.sheetID = undefined;
     }
-
-    //get name() {
-    //  return `${this.columnName}${this.rowName}`;
-    //}
   }
 
-  initSpreadSheet();
   function getSheetId(location) {
     const url = new URL(location);
     const parts = url.pathname.split('/');
@@ -100,7 +93,23 @@ templ EditView(sheet models.Sheet) {
     a.click();
   });
 
-  function initSpreadSheet() {
+
+  async function fetchData() {
+    try {
+      const response = await fetch(`/api/cells/${getSheetId(window.location.href)}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      return [];
+    }
+  }
+
+  async function initSpreadSheet() {
+    const fetchedData = await fetchData();
+
     for (let i = 0; i < ROWS; i++) {
       let spreadSheetRow = [];
       for (let j = 0; j < COLS; j++) {
@@ -112,7 +121,6 @@ templ EditView(sheet models.Sheet) {
           isHeader = true;
           isDisabled = true;
         }
-
         if (i === 0) {
           cellData = alphabets[j - 1];
           isDisabled = true;
@@ -129,8 +137,18 @@ templ EditView(sheet models.Sheet) {
       spreadSheet.push(spreadSheetRow);
     }
 
+    // Populate the cells with the fetched data
+    for (const item of fetchedData) {
+      const {row, column, data} = item;
+      if (spreadSheet[row] && spreadSheet[row][column]) {
+        spreadSheet[row][column].data = data;
+      }
+    }
+
     drawSheet();
   }
+
+  initSpreadSheet();
 
   function drawSheet() {
     sContainer.innerHTML = "";
@@ -144,7 +162,6 @@ templ EditView(sheet models.Sheet) {
       sContainer.append(rowContainerEl);
     }
   }
-
 
   function createCellEl(cell) {
     const cellEl = document.createElement("input");
@@ -168,15 +185,11 @@ templ EditView(sheet models.Sheet) {
     activeContainer.innerText = cell.name;
   }
 
-
-
-  console.log(window.location.href)
+  console.log(window.location.href);
   async function handlerCellOnchange(data, cell) {
-
     cell.data = data;
-    cell.sheetID = parseInt(getSheetId(window.location.href))
+    cell.sheetID = parseInt(getSheetId(window.location.href));
     try {
-      // Send data to the server
       const response = await fetch('/api/save', {
         method: 'POST',
         headers: {
@@ -211,5 +224,6 @@ templ EditView(sheet models.Sheet) {
   function getElFromRowCol(row, col) {
     return document.querySelector("#cell_" + row + col);
   }
+
 </script>
 }

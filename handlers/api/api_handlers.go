@@ -21,18 +21,20 @@ func Save(app core.App) echo.HandlerFunc {
 		// if err != nil {
 		// 	fmt.Println(err)
 		// }
-		var spreadsheet models.Spreadsheet
-		var sheet models.Sheet
+		var cellParams models.Cell
 		var cell models.Cell
-		err := c.Bind(&cell)
+
+		err := c.Bind(&cellParams)
 		if err != nil {
 			fmt.Println(err)
 		}
-		app.DB().Find(&sheet, cell.SheetID)
-		app.DB().Find(&spreadsheet, sheet.SpreadsheetID)
-		sheet.Cells = append(sheet.Cells, cell)
-		spreadsheet.Sheets = append(spreadsheet.Sheets, sheet)
-		res := app.DB().Save(&spreadsheet)
+		app.DB().Where("name = ?", cellParams.Name).First(&cell)
+		cell.Value = cellParams.Value
+		cell.RowNumber = cellParams.RowNumber
+		cell.Name = cellParams.Name
+		cell.ColumnNumber = cellParams.ColumnNumber
+
+		res := app.DB().Save(&cell)
 		if res.Error != nil {
 			fmt.Println(res.Error)
 		} else {
@@ -44,7 +46,14 @@ func Save(app core.App) echo.HandlerFunc {
 
 func Fetch(app core.App) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return c.JSON(200, "")
+		var sheet models.Sheet
+		var cells []models.Cell
+		app.DB().Where("id = ?", c.Param("spreadsheetid")).First(&sheet)
+		fmt.Println("sheet: ", sheet)
+		app.DB().Where("sheet_id = ?", sheet.ID).Find(&cells)
+		fmt.Println("celss: ", cells)
+
+		return c.JSON(200, cells)
 	}
 }
 
