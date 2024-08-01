@@ -3,4 +3,5 @@ build/
 **/*_templ.txt
 **/*_templ.go
 **/.env
+store.db
 

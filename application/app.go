@@ -28,7 +28,7 @@ type app struct {
 }
 
 // creates new app
-func New(port uint64, staticFiles embed.FS) *app {
+func New(port uint64, staticFiles embed.FS) core.App {
 	return &app{
 		router:      echo.New(),
 		db:          database.DB(),

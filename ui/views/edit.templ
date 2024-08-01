@@ -5,41 +5,6 @@ import (
 )
 
 templ EditView(sheet models.Sheet) {
-<style>
-  .cell-row {
-    display: flex;
-  }
-
-  .cell {
-    border: 1px solid #e5e7eb;
-    padding: 0.5rem;
-    text-align: center;
-    width: 100%;
-    min-width: 100px;
-    font-size: 0.875rem;
-    /* Small font size */
-    flex-grow: 1;
-  }
-
-  .cell-header {
-    background-color: #f3f4f6;
-    font-weight: bold;
-  }
-
-  .active {
-    background-color: #d1d5db;
-  }
-
-  #info-container {
-    margin: 1rem;
-    overflow-x: auto;
-    /* Make the container scrollable horizontally */
-  }
-
-  #export-btn {
-    margin-bottom: 1rem;
-  }
-</style>
 <h1 class="text-2xl font-bold text-center my-4">Edit view</h1>
 <div id="info-container" class="p-4 bg-white shadow-lg rounded-lg">
   <h2 class="text-xl font-semibold">{ sheet.Name }</h2>
@@ -53,7 +18,7 @@ templ EditView(sheet models.Sheet) {
   const activeContainer = document.getElementById("active-container");
   const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  const ROWS = 25;
+  const ROWS = 100;
   const COLS = alphabets.length + 1;
   let spreadSheet = [];
 
@@ -68,6 +33,7 @@ templ EditView(sheet models.Sheet) {
       this.rowName = rowName;
       this.columnName = columnName;
       this.name = `${this.columnName}${this.rowName}`;
+      this.dataType = "text";
       this.sheetID = undefined;
     }
   }
@@ -77,15 +43,15 @@ templ EditView(sheet models.Sheet) {
     const parts = url.pathname.split('/');
     const id = parts[parts.length - 1];
     return id
-
   }
 
+  // download data in csv format
   downloadButton.addEventListener("click", (_) => {
-    let csv = "";
+    let data = "";
     for (let i = 0; i < spreadSheet.length; i++) {
       csv += spreadSheet[i].filter(item => !item.isHeader).map(item => item.data).join(",") + "\r\n";
     }
-    const csvBlob = new Blob([csv]);
+    const csvBlob = new Blob([data]);
     const csvFileUrl = URL.createObjectURL(csvBlob);
     const a = document.createElement("a");
     a.href = csvFileUrl;
@@ -164,14 +130,14 @@ templ EditView(sheet models.Sheet) {
   }
 
   function createCellEl(cell) {
-    const cellEl = document.createElement("input");
-    cellEl.className = `cell ${cell.isHeader ? 'cell-header' : ''}`;
-    cellEl.id = "cell_" + cell.row + cell.column;
-    cellEl.value = cell.data;
-    cellEl.disabled = cell.disabled;
-    cellEl.onclick = () => handlerCellClick(cell);
-    cellEl.onchange = async (e) => await handlerCellOnchange(e.target.value, cell);
-    return cellEl;
+    const cellElement = document.createElement("input");
+    cellElement.className = `cell ${cell.isHeader ? 'cell-header' : ''}`;
+    cellElement.id = "cell_" + cell.row + cell.column;
+    cellElement.value = cell.data;
+    cellElement.disabled = cell.disabled;
+    cellElement.onclick = () => handlerCellClick(cell);
+    cellElement.onchange = async (e) => await handlerCellOnchange(e.target.value, cell);
+    return cellElement;
   }
 
   function handlerCellClick(cell) {
@@ -214,8 +180,8 @@ templ EditView(sheet models.Sheet) {
       for (let j = 0; j < spreadSheet[i].length; j++) {
         const cell = spreadSheet[i][j];
         if (cell.isHeader) {
-          let cellEl = getElFromRowCol(cell.row, cell.column);
-          cellEl.classList.remove("active");
+          let cellElement = getElFromRowCol(cell.row, cell.column);
+          cellElement.classList.remove("active");
         }
       }
     }
@@ -224,6 +190,32 @@ templ EditView(sheet models.Sheet) {
   function getElFromRowCol(row, col) {
     return document.querySelector("#cell_" + row + col);
   }
+
+  // horizontal scrolling 
+  let isMouseDown = false;
+  let startX, scrollLeft;
+
+  sContainer.addEventListener('mousedown', (e) => {
+    isMouseDown = true;
+    startX = e.pageX - sContainer.offsetLeft;
+    scrollLeft = sContainer.scrollLeft;
+  });
+
+  sContainer.addEventListener('mouseleave', () => {
+    isMouseDown = false;
+  });
+
+  sContainer.addEventListener('mouseup', () => {
+    isMouseDown = false;
+  });
+
+  sContainer.addEventListener('mousemove', (e) => {
+    if (!isMouseDown) return;
+    e.preventDefault();
+    const x = e.pageX - sContainer.offsetLeft;
+    const walk = (x - startX) * 3; // scroll-fast
+    sContainer.scrollLeft = scrollLeft - walk;
+  });
 
 </script>
 }

@@ -14,7 +14,7 @@ import (
 var db *gorm.DB
 
 // creates a connection to sqlite database
-func ConnectDB(DBURL string) *gorm.DB {
+func ConnectDB(DBURL string) {
 	var err error
 	db, err = gorm.Open(sqlite.Open(DBURL), &gorm.Config{SkipDefaultTransaction: true})
 	if err != nil {
@@ -30,9 +30,7 @@ func ConnectDB(DBURL string) *gorm.DB {
 		log.Println("error occured while migrating data: ", err)
 		os.Exit(-1)
 	}
-
 	log.Println("DB Connected SuccessFully")
-	return db
 }
 
 // exposes the db
