@@ -1,7 +1,17 @@
 package components
 
-templ WorkspaceContainer() {
-<div class="rounded p-5 bg-gray-100">
+import (
+"spreadsheet/spdb/models"
+"fmt"
+)
+
+templ WorkspaceContainer(sheet models.Sheet) {
+<a class="rounded p-5 bg-gray-100 shadow" href={ templ.URL(fmt.Sprintf("/edit/%d", sheet.ID)) }>
+  { sheet.Name }
+</a>
+/*
+<a class="rounded p-5 bg-gray-100" hx-push-url="true" hx-target="#view" hx-get={ fmt.Sprintf("/edit/%d", sheet.ID) }>
   Hello wolrd
-</div>
+</a>
+*/
 }

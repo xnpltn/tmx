@@ -1,0 +1,29 @@
+
+
+.cell-row{
+  display: flex;
+}
+
+
+.cell{
+  width: 70px;
+  height: 30px;
+  border: 1px solid #555;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.cell:focus{
+  border: 1px solid blue;
+}
+
+.cell:disabled{
+  background-color: #ddd;
+  color: #000;
+  text-align: center;
+}
+
+.cell.active{
+  border: 2px solid blue;
+
+}

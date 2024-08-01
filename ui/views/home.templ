@@ -2,11 +2,34 @@ package views
 
 import (
 "spreadsheet/spdb/ui/components"
+"spreadsheet/spdb/models"
+"fmt"
 )
 
-templ HomeView() {
+templ HomeView(sheets []models.Sheet) {
 <h1>Home </h1>
-<div class="flex items-center justify-center gap-3">
-  @components.WorkspaceContainer()
+<!-- Button to trigger the modal -->
+<div class="flex items-center justify-center bg-gray-200 rounded p-5">
+  <button type="button" class="text-lg rounded bg-blue-500 px-3 py-2 text-white" onclick="openModal()">Add</button>
 </div>
+@components.CreateNewModal()
+<p>
+  Available workspaces: { fmt.Sprintf("%d", len(sheets)) }
+</p>
+<div class="flex items-center justify-center gap-3 flex-wrap">
+  for _, sheet := range sheets {
+  @components.WorkspaceContainer(sheet)
+  }
+</div>
+<script>
+  function openModal() {
+    document.getElementById('modal').classList.remove('hidden');
+    document.getElementById('modal').classList.add('flex');
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('flex');
+    document.getElementById('modal').classList.add('hidden');
+  }
+</script>
 }

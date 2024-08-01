@@ -48,8 +48,14 @@ func (a *app) Start(ctx context.Context) error {
 		fmt.Println(err)
 		return err
 	}
+
+	// serve static files
 	a.router.GET("/static/*", echo.WrapHandler(http.StripPrefix("/static", http.FileServer(http.FS(static)))))
+
+	// application routes
 	loadUIRoutes(a)
+	loadAPIRoutes(a)
+
 	errChan := make(chan error, 1)
 	go func() {
 		log.Println("Server listening on port: ", a.port)
@@ -76,7 +82,7 @@ func (a *app) Start(ctx context.Context) error {
 	return nil
 }
 
-// shuts down the app
+// shuts down the app gracefully waiting 10 seconds to finish running tasks
 func (a *app) Shutdown(server *http.Server) error {
 	log.Println("gracefully shutting down ...")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)

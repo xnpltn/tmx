@@ -1,0 +1,29 @@
+package components
+
+templ CreateNewModal() {
+<!-- Modal -->
+<div id="modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center">
+  <div class="bg-white p-8 rounded-lg shadow-xl">
+    <h2 class="text-2xl font-bold mb-4">Add New Item</h2>
+    <form hx-post="/api/new" hx-target="#result">
+      <div class="mb-4">
+        <label for="collection" class="block text-gray-700 text-sm font-bold mb-2">Collection</label>
+        <input type="text" id="collection" name="collection"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+      </div>
+      <div class="mb-6">
+        <label for="sheetName" class="block text-gray-700 text-sm font-bold mb-2">Sheet Name</label>
+        <input type="text" id="sheetName" name="sheetName"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+      </div>
+      <div class="flex items-center justify-between">
+        <button type="submit"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
+        <button type="button" onclick="closeModal()"
+          class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Close</button>
+      </div>
+      <span id="result"></span>
+    </form>
+  </div>
+</div>
+}

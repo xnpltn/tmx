@@ -9,14 +9,13 @@ templ Layout(layoutPath string) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Document</title>
   <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="stylesheet" href="/static/css/sheets.css" />
   <script src="/static/js/htmx.min.js"></script>
-  <link />
 </head>
 
 <body class="">
-  <a hx-get="/edit/hello" hx-target="#view" hx-trigger="click" hx-push-url="true"
-    class="nav-button bg-blue-200">Edit</a>
-  <a hx-get="/" hx-target="#view" hx-trigger="click" hx-push-url="true" class="nav-button bg-blue-200">Home</a>
+  <a hx-get="/" hx-target="#view" hx-trigger="click" hx-push-url="true"
+    class="nav-button bg-blue-200 p-2 rounded">Home</a>
   <main id="view" hx-swap="innerHTML" hx-get={ layoutPath } hx-trigger="load" class="px-32"></main>
 </body>
 

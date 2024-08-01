@@ -37,5 +37,26 @@ func ConnectDB(DBURL string) *gorm.DB {
 
 // exposes the db
 func DB() *gorm.DB {
+	// db.Create(&ssheet)
 	return db
 }
+
+// arbitrary data for testing
+var (
+	ssheet models.Spreadsheet = models.Spreadsheet{
+		Name:   "one",
+		Sheets: []models.Sheet{sheet},
+	}
+	cell models.Cell = models.Cell{
+		SheetID:      1,
+		RowNumber:    1,
+		ColumnNumber: 1,
+		DataType:     "int",
+		Name:         "name",
+	}
+	sheet models.Sheet = models.Sheet{
+		SpreadsheetID: 1,
+		Name:          "one_one",
+		Cells:         []models.Cell{cell},
+	}
+)

@@ -3,7 +3,7 @@ tmp_dir = "tmp"
 
 [build]
 
-cmd = "templ generate && go build -o bin/app main.go"
+cmd = "go build -o bin/app main.go"
 bin = "./bin/app"
 full_bin = "APP_ENV=dev APP_USER=air ./bin/app"
 args_bin = ["serve", '--http="localhost:8090"']
