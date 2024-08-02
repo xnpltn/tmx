@@ -5,217 +5,154 @@ import (
 )
 
 templ EditView(sheet models.Sheet) {
-<h1 class="text-2xl font-bold text-center my-4">Edit view</h1>
-<div id="info-container" class="p-4 bg-white shadow-lg rounded-lg">
-  <h2 class="text-xl font-semibold">{ sheet.Name }</h2>
-  <button id="export-btn" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Export</button>
-  <span id="active-container" class="block my-4"></span>
-  <div id="scon" class="overflow-auto whitespace-nowrap"></div> <!-- Ensure horizontal scrolling -->
+<div class="container mx-auto p-4">
+  <div class="bg-white rounded-lg shadow-lg">
+    <!-- Header -->
+    <div class="flex justify-between items-center p-4 border-b">
+      <div class="flex items-center">
+        <span class="text-xl font-bold mr-4">💰 CRM</span>
+        <button class="px-3 py-1 bg-gray-200 rounded">󰉋</button>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span>Accounts</span>
+        <span class="text-gray-500 text-sm">last modified: 18 minutes ago</span>
+        <button class="px-3 py-1 bg-gray-200 rounded">Grid view</button>
+        <button class="px-3 py-1 bg-blue-500 text-white rounded">+</button>
+      </div>
+      <div class="flex items-center space-x-4">
+        // <img src="avatar.jpg" alt="User Avatar" class="w-8 h-8 rounded-full" />
+        <button class="p-2 bg-gray-200 rounded">⚙️</button>
+        <button class="px-4 py-2 bg-blue-500 text-white rounded">Invite</button>
+      </div>
+    </div>
+    <!-- Sidebar -->
+    <div class="flex">
+      <div class="w-1/5 p-4 border-r">
+        <div class="mb-4">
+          <input type="text" placeholder="Quick Actions..." class="w-full p-2 border rounded" />
+        </div>
+        <ul class="space-y-2">
+          <li>Dashboard</li>
+          <li>Automation</li>
+          <li>Order detail</li>
+          <li>Orders</li>
+          <li class="font-bold">Accounts</li>
+          <li>Products</li>
+          <li>Supplier</li>
+          <li>Purchase</li>
+          <li>1 Million</li>
+        </ul>
+      </div>
+      <!-- Main Content -->
+      <div class="w-4/5 p-4">
+        <div class="flex justify-between mb-4">
+          <div class="flex space-x-2">
+            <button class="px-3 py-1 bg-gray-200 rounded">Hide fields</button>
+            <button class="px-3 py-1 bg-gray-200 rounded">Filter</button>
+            <button class="px-3 py-1 bg-gray-200 rounded">Sort</button>
+            <button class="px-3 py-1 bg-gray-200 rounded">Group</button>
+            <button class="px-3 py-1 bg-gray-200 rounded">Color</button>
+          </div>
+          <div class="flex space-x-2">
+            <button class="px-3 py-1 bg-gray-200 rounded">Share</button>
+            <button class="px-3 py-1 bg-gray-200 rounded">Extensions</button>
+            <button class="px-3 py-1 bg-gray-200 rounded">API</button>
+          </div>
+        </div>
+        <!-- Table -->
+        <table id="data-table" class="w-full">
+          <thead>
+            <tr class="bg-gray-100">
+              <th class="p-2 text-left">Name</th>
+              <th class="p-2 text-left">Amount Chart</th>
+              <th class="p-2 text-left">Total money</th>
+              <th class="p-2 text-left">Platform</th>
+              <th class="p-2 text-left">Order times</th>
+              <th class="p-2 text-left">Regi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="p-2 editable" contenteditable="true">Maiya</td>
+              <td class="p-2 editable" contenteditable="true">[Chart Placeholder]</td>
+              <td class="p-2 editable" contenteditable="true">$407,300.00</td>
+              <td class="p-2 editable" contenteditable="true">
+                <span class="bg-orange-500 text-white px-2 py-1 rounded">Amazon</span>
+              </td>
+              <td class="p-2 editable" contenteditable="true">23</td>
+              <td class="p-2 editable" contenteditable="true">2023-1</td>
+            </tr>
+            <!-- More rows will be added here by JavaScript -->
+          </tbody>
+        </table>
+        <button id="add-row" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Add Row</button>
+      </div>
+    </div>
+  </div>
 </div>
 <script>
-  const sContainer = document.getElementById("scon");
-  const downloadButton = document.getElementById("export-btn");
-  const activeContainer = document.getElementById("active-container");
-  const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const table = document.getElementById('data-table').getElementsByTagName('tbody')[0];
+  const addRowButton = document.getElementById('add-row');
+  const initialData = [
+    {name: 'John Doe', amountChart: '[Chart Placeholder]', totalMoney: '$123,456.78', platform: 'eBay', orderTimes: 15, regi: '2022-4'},
+    {name: 'Jane Smith', amountChart: '[Chart Placeholder]', totalMoney: '$654,321.00', platform: 'Etsy', orderTimes: 30, regi: '2023-2'}
+  ];
 
-  const ROWS = 100;
-  const COLS = alphabets.length + 1;
-  let spreadSheet = [];
+  function addRow(data) {
+    const row = table.insertRow();
+    row.innerHTML = `
+        <td class="p-2 editable" contenteditable="true">${data.name}</td>
+        <td class="p-2 editable" contenteditable="true">${data.amountChart}</td>
+        <td class="p-2 editable" contenteditable="true">${data.totalMoney}</td>
+        <td class="p-2 editable" contenteditable="true"><span class="bg-orange-500 text-white px-2 py-1 rounded">${data.platform}</span></td>
+        <td class="p-2 editable" contenteditable="true">${data.orderTimes}</td>
+        <td class="p-2 editable" contenteditable="true">${data.regi}</td>
+      `;
 
-  class Cell {
-    constructor(isHeader, disabled, data, row, column, rowName, columnName, active = false) {
-      this.isHeader = isHeader;
-      this.disabled = disabled;
-      this.data = data;
-      this.row = row;
-      this.column = column;
-      this.active = active;
-      this.rowName = rowName;
-      this.columnName = columnName;
-      this.name = `${this.columnName}${this.rowName}`;
-      this.dataType = "text";
-      this.sheetID = undefined;
-    }
-  }
-
-  function getSheetId(location) {
-    const url = new URL(location);
-    const parts = url.pathname.split('/');
-    const id = parts[parts.length - 1];
-    return id
-  }
-
-  // download data in csv format
-  downloadButton.addEventListener("click", (_) => {
-    let data = "";
-    for (let i = 0; i < spreadSheet.length; i++) {
-      csv += spreadSheet[i].filter(item => !item.isHeader).map(item => item.data).join(",") + "\r\n";
-    }
-    const csvBlob = new Blob([data]);
-    const csvFileUrl = URL.createObjectURL(csvBlob);
-    const a = document.createElement("a");
-    a.href = csvFileUrl;
-    a.download = "Exported.csv";
-    a.click();
-  });
-
-
-  async function fetchData() {
-    try {
-      const response = await fetch(`/api/cells/${getSheetId(window.location.href)}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      return [];
-    }
-  }
-
-  async function initSpreadSheet() {
-    const fetchedData = await fetchData();
-
-    for (let i = 0; i < ROWS; i++) {
-      let spreadSheetRow = [];
-      for (let j = 0; j < COLS; j++) {
-        let cellData = "";
-        let isHeader = false;
-        let isDisabled = false;
-        if (j === 0) {
-          cellData = i;
-          isHeader = true;
-          isDisabled = true;
-        }
-        if (i === 0) {
-          cellData = alphabets[j - 1];
-          isDisabled = true;
-          isHeader = true;
-        }
-        if (!cellData) {
-          cellData = "";
-        }
-        let rowName = i;
-        let columnName = alphabets[j - 1];
-        const cell = new Cell(isHeader, isDisabled, cellData, i, j, rowName, columnName, false);
-        spreadSheetRow.push(cell);
-      }
-      spreadSheet.push(spreadSheetRow);
-    }
-
-    // Populate the cells with the fetched data
-    for (const item of fetchedData) {
-      const {row, column, data} = item;
-      if (spreadSheet[row] && spreadSheet[row][column]) {
-        spreadSheet[row][column].data = data;
-      }
-    }
-
-    drawSheet();
-  }
-
-  initSpreadSheet();
-
-  function drawSheet() {
-    sContainer.innerHTML = "";
-    for (let i = 0; i < spreadSheet.length; i++) {
-      const rowContainerEl = document.createElement("div");
-      rowContainerEl.className = "cell-row";
-      for (let j = 0; j < spreadSheet[i].length; j++) {
-        const cell = spreadSheet[i][j];
-        rowContainerEl.append(createCellEl(cell));
-      }
-      sContainer.append(rowContainerEl);
-    }
-  }
-
-  function createCellEl(cell) {
-    const cellElement = document.createElement("input");
-    cellElement.className = `cell ${cell.isHeader ? 'cell-header' : ''}`;
-    cellElement.id = "cell_" + cell.row + cell.column;
-    cellElement.value = cell.data;
-    cellElement.disabled = cell.disabled;
-    cellElement.onclick = () => handlerCellClick(cell);
-    cellElement.onchange = async (e) => await handlerCellOnchange(e.target.value, cell);
-    return cellElement;
-  }
-
-  function handlerCellClick(cell) {
-    clearActiveState();
-    const rowHeader = spreadSheet[cell.row][0];
-    const columnHeader = spreadSheet[0][cell.column];
-    const columnHeaderEl = getElFromRowCol(columnHeader.row, columnHeader.column);
-    const rowHeaderEl = getElFromRowCol(rowHeader.row, rowHeader.column);
-    columnHeaderEl.classList.add("active");
-    rowHeaderEl.classList.add("active");
-    activeContainer.innerText = cell.name;
-  }
-
-  console.log(window.location.href);
-  async function handlerCellOnchange(data, cell) {
-    cell.data = data;
-    cell.sheetID = parseInt(getSheetId(window.location.href));
-    try {
-      const response = await fetch('/api/save', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(cell),
+    // Add event listener to log changes
+    Array.from(row.getElementsByClassName('editable')).forEach(cell => {
+      cell.addEventListener('input', () => {
+        console.log('Data changed:', getTableData());
       });
+    });
+  }
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('Save successful:', result);
-    } catch (error) {
-      console.error('Error saving data:', error);
+  function getTableData() {
+    const rows = table.getElementsByTagName('tr');
+    const data = [];
+    for (let i = 0; i < rows.length; i++) {
+      const cells = rows[i].getElementsByClassName('editable');
+      const row = {
+        name: cells[0].innerText,
+        amountChart: cells[1].innerText,
+        totalMoney: cells[2].innerText,
+        platform: cells[3].innerText,
+        orderTimes: parseInt(cells[4].innerText),
+        regi: cells[5].innerText,
+      };
+      data.push(row);
     }
+    return data;
   }
 
-  function clearActiveState() {
-    for (let i = 0; i < spreadSheet.length; i++) {
-      for (let j = 0; j < spreadSheet[i].length; j++) {
-        const cell = spreadSheet[i][j];
-        if (cell.isHeader) {
-          let cellElement = getElFromRowCol(cell.row, cell.column);
-          cellElement.classList.remove("active");
-        }
-      }
-    }
-  }
+  initialData.forEach(data => addRow(data));
 
-  function getElFromRowCol(row, col) {
-    return document.querySelector("#cell_" + row + col);
-  }
-
-  // horizontal scrolling 
-  let isMouseDown = false;
-  let startX, scrollLeft;
-
-  sContainer.addEventListener('mousedown', (e) => {
-    isMouseDown = true;
-    startX = e.pageX - sContainer.offsetLeft;
-    scrollLeft = sContainer.scrollLeft;
+  addRowButton.addEventListener('click', () => {
+    addRow({
+      name: '',
+      amountChart: '[Chart Placeholder]',
+      totalMoney: '',
+      platform: '',
+      orderTimes: '',
+      regi: ''
+    });
   });
 
-  sContainer.addEventListener('mouseleave', () => {
-    isMouseDown = false;
+  // Add event listeners to initial rows
+  document.querySelectorAll('.editable').forEach(cell => {
+    cell.addEventListener('input', () => {
+      console.log('Data changed:', getTableData());
+    });
   });
-
-  sContainer.addEventListener('mouseup', () => {
-    isMouseDown = false;
-  });
-
-  sContainer.addEventListener('mousemove', (e) => {
-    if (!isMouseDown) return;
-    e.preventDefault();
-    const x = e.pageX - sContainer.offsetLeft;
-    const walk = (x - startX) * 3; // scroll-fast
-    sContainer.scrollLeft = scrollLeft - walk;
-  });
-
 </script>
 }

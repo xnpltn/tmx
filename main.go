@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	port     uint64
-	sqliteDb string
+	PORT      uint64
+	SQLITE_DB string
 )
 
 // static files
@@ -24,13 +24,13 @@ var staticAssets embed.FS
 
 // init function runs before main
 func init() {
-	flag.Uint64Var(&port, "port", 6969, "port for server to listen on")
+	flag.Uint64Var(&PORT, "port", 6969, "port for server to listen on")
 	if os.Getenv("SQLITE_DB") != "" {
-		sqliteDb = os.Getenv("SQLITE_DB")
+		SQLITE_DB = os.Getenv("SQLITE_DB")
 	} else {
-		sqliteDb = "store.db"
+		SQLITE_DB = "store.db"
 	}
-	database.ConnectDB(sqliteDb)
+	database.ConnectDB(SQLITE_DB)
 }
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill)
 	defer cancel()
 
-	app := application.New(port, staticAssets)
+	app := application.New(PORT, staticAssets)
 	if err := app.Start(ctx); err != nil {
 		log.Fatal(err)
 	}

@@ -6,10 +6,10 @@ tmp_dir = "tmp"
 cmd = "go build -o bin/app main.go"
 bin = "./bin/app"
 full_bin = "APP_ENV=dev APP_USER=air ./bin/app"
-args_bin = ["serve", '--http="localhost:8090"']
-include_ext = ["go", "templ", "html","css"]
+args_bin = ["-port", '6969']
+include_ext = ["go", "css"]
 exclude_dir = ["assets","bin"]
-exclude_regex = ["_test\\.go"]
+exclude_regex = ["\\.templ"]
 exclude_unchanged = true
 follow_symlink = true
 log = "air.log"

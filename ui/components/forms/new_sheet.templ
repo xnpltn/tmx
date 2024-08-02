@@ -1,0 +1,28 @@
+package forms
+
+templ NewSheetForm() {
+<form id="sheet-form">
+  <div class="mb-4">
+    <label for="sheet-name" class="block text-gray-700">Sheet Name</label>
+    <input type="text" id="sheet-name" name="sheet-name" class="w-full p-2 border rounded" required />
+  </div>
+  <div id="titles-container" class="mb-4">
+    <label for="titles" class="block text-gray-700">Titles</label>
+    <div class="flex space-x-2 mb-2">
+      <input type="text" name="titles[0][name]" class="w-full p-2 border rounded" placeholder="Title" required />
+      <select name="titles[0][dataType]" class="w-full p-2 border rounded" required>
+        <option value="Text">Text</option>
+        <option value="CheckBox">CheckBox</option>
+        <option value="Status">Status</option>
+        <option value="Tag">Tag</option>
+        <option value="Date">Date</option>
+        <option value="Label">Label</option>
+      </select>
+    </div>
+  </div>
+  <button type="button" id="add-title" class="px-4 py-2 bg-blue-500 text-white rounded">Add Title</button>
+  <div class="mt-4">
+    <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded">Create Sheet</button>
+  </div>
+</form>
+}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM Dashboard</title>
+  <!--<style src="./static/css/style.css"></style>-->
+  <link rel="stylesheet" type="" href="./static/css/style.css">
+  <style>
+    .editable {
+      background-color: #f9f9f9;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+  <div class="container mx-auto p-4">
+    <div class="bg-white rounded-lg shadow-lg">
+      <!-- Header -->
+      <div class="flex justify-between items-center p-4 border-b">
+        <div class="flex items-center">
+          <span class="text-xl font-bold mr-4">💰 CRM</span>
+          <button class="px-3 py-1 bg-gray-200 rounded">󰉋</button>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span>Accounts</span>
+          <span class="text-gray-500 text-sm">last modified: 18 minutes ago</span>
+          <button class="px-3 py-1 bg-gray-200 rounded">Grid view</button>
+          <button class="px-3 py-1 bg-blue-500 text-white rounded">+</button>
+        </div>
+        <div class="flex items-center space-x-4">
+          <img src="avatar.jpg" alt="User Avatar" class="w-8 h-8 rounded-full">
+          <button class="p-2 bg-gray-200 rounded">⚙️</button>
+          <button class="px-4 py-2 bg-blue-500 text-white rounded">Invite</button>
+        </div>
+      </div>
+      <!-- Sidebar -->
+      <div class="flex">
+        <div class="w-1/5 p-4 border-r">
+          <div class="mb-4">
+            <input type="text" placeholder="Quick Actions..." class="w-full p-2 border rounded">
+          </div>
+          <ul class="space-y-2">
+            <li>Dashboard</li>
+            <li>Automation</li>
+            <li>Order detail</li>
+            <li>Orders</li>
+            <li class="font-bold">Accounts</li>
+            <li>Products</li>
+            <li>Supplier</li>
+            <li>Purchase</li>
+            <li>1 Million</li>
+          </ul>
+        </div>
+        <!-- Main Content -->
+        <div class="w-4/5 p-4">
+          <div class="flex justify-between mb-4">
+            <div class="flex space-x-2">
+              <button class="px-3 py-1 bg-gray-200 rounded">Hide fields</button>
+              <button class="px-3 py-1 bg-gray-200 rounded">Filter</button>
+              <button class="px-3 py-1 bg-gray-200 rounded">Sort</button>
+              <button class="px-3 py-1 bg-gray-200 rounded">Group</button>
+              <button class="px-3 py-1 bg-gray-200 rounded">Color</button>
+            </div>
+            <div class="flex space-x-2">
+              <button class="px-3 py-1 bg-gray-200 rounded">Share</button>
+              <button class="px-3 py-1 bg-gray-200 rounded">Extensions</button>
+              <button class="px-3 py-1 bg-gray-200 rounded">API</button>
+            </div>
+          </div>
+          <!-- Table -->
+          <table id="data-table" class="w-full">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="p-2 text-left">Name</th>
+                <th class="p-2 text-left">Amount Chart</th>
+                <th class="p-2 text-left">Total money</th>
+                <th class="p-2 text-left">Platform</th>
+                <th class="p-2 text-left">Order times</th>
+                <th class="p-2 text-left">Regi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+              </tr>
+              <!-- More rows will be added here by JavaScript -->
+            </tbody>
+          </table>
+          <button id="add-row" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Add Row</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const table = document.getElementById('data-table').getElementsByTagName('tbody')[0];
+    const addRowButton = document.getElementById('add-row');
+    const initialData = [
+      {name: 'John Doe', amountChart: '[Chart Placeholder]', totalMoney: '$123,456.78', platform: 'eBay', orderTimes: 15, regi: '2022-4'},
+      {name: 'Jane Smith', amountChart: '[Chart Placeholder]', totalMoney: '$654,321.00', platform: 'Etsy', orderTimes: 30, regi: '2023-2'}
+    ];
+
+    function addRow(data) {
+      const row = table.insertRow();
+      row.innerHTML = `
+        <td class="p-2 editable" contenteditable="true">${data.name}</td>
+        <td class="p-2 editable" contenteditable="true">${data.amountChart}</td>
+        <td class="p-2 editable" contenteditable="true">${data.totalMoney}</td>
+        <td class="p-2  editable" contenteditable="true"><span class="bg-orange-500 text-white px-2 py-1 rounded">${data.platform}</span></td>
+        <td class="p-2 editable" contenteditable="true">${data.orderTimes}</td>
+        <td class="p-2 editable" contenteditable="true">${data.regi}</td>
+      `;
+    }
+
+    initialData.forEach(data => addRow(data));
+
+    addRowButton.addEventListener('click', () => {
+      addRow({
+        name: '',
+        amountChart: '[Chart Placeholder]',
+        totalMoney: '',
+        platform: '',
+        orderTimes: '',
+        regi: ''
+      });
+    });
+  </script>
+</body>
+
+</html>

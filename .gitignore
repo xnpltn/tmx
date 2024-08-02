@@ -4,4 +4,4 @@ build/
 **/*_templ.go
 **/.env
 store.db
-
+temp/
