@@ -44,8 +44,50 @@ const (
 // Cell represents a single cell in a row, holding a specific type of data.
 type Cell struct {
 	gorm.Model
-	DataType       DataType    `gorm:"type:int"`
-	DataTypeString string      `json:"dataType" gorm:"type:text"`
-	Value          interface{} `json:"value" gorm:"type:text"` // Using text type to store any value.
-	RowID          uint        `json:"row_id" gorm:"not null"`
+	Name           string   `gorm:"type:text" json:"name"`
+	DataType       DataType `gorm:"type:int"`
+	DataTypeString string   `json:"dataType" gorm:"type:text"`
+	Value          string   `json:"value" gorm:"type:text not null"` // Using text type to store any value.
+	RowID          uint     `gorm:"not null"`
+}
+
+var TestSheet = Sheet{
+	Name:    "hello",
+	Tittles: titles,
+	Rows:    []Row{row, row2},
+}
+
+var titles = []Title{
+	{Name: "title 1"},
+	{Name: "title 2"},
+	{Name: "title 3"},
+	{Name: "title 4"},
+	{Name: "title 5"},
+	{Name: "title 6"},
+}
+
+var row = Row{
+	Cells: cells,
+}
+
+var row2 = Row{
+	Cells: cells2,
+}
+
+var cells = []Cell{
+	{Value: "1"},
+	{Value: "2"},
+	{Value: "3"},
+	{Value: "4"},
+	{Value: "5"},
+	{Value: "5"},
+}
+
+var cells2 = []Cell{
+	{Value: "6"},
+	{Value: "7"},
+	{Value: "8"},
+	{Value: "9"},
+	{Value: "10"},
+	{Value: "11"},
 }

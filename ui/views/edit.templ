@@ -2,6 +2,9 @@ package views
 
 import (
 "spreadsheet/spdb/models"
+"spreadsheet/spdb/ui/components"
+"fmt"
+"time"
 )
 
 templ EditView(sheet models.Sheet) {
@@ -10,149 +13,111 @@ templ EditView(sheet models.Sheet) {
     <!-- Header -->
     <div class="flex justify-between items-center p-4 border-b">
       <div class="flex items-center">
-        <span class="text-xl font-bold mr-4">💰 CRM</span>
         <button class="px-3 py-1 bg-gray-200 rounded">󰉋</button>
       </div>
       <div class="flex items-center space-x-4">
         <span>Accounts</span>
-        <span class="text-gray-500 text-sm">last modified: 18 minutes ago</span>
+        <span class="text-gray-500 text-sm">
+          last modified: { fmt.Sprintf("%v ago",
+          time.Since(sheet.UpdatedAt)) }
+        </span>
         <button class="px-3 py-1 bg-gray-200 rounded">Grid view</button>
         <button class="px-3 py-1 bg-blue-500 text-white rounded">+</button>
       </div>
       <div class="flex items-center space-x-4">
         // <img src="avatar.jpg" alt="User Avatar" class="w-8 h-8 rounded-full" />
         <button class="p-2 bg-gray-200 rounded">⚙️</button>
-        <button class="px-4 py-2 bg-blue-500 text-white rounded">Invite</button>
       </div>
     </div>
     <!-- Sidebar -->
     <div class="flex">
-      <div class="w-1/5 p-4 border-r">
-        <div class="mb-4">
-          <input type="text" placeholder="Quick Actions..." class="w-full p-2 border rounded" />
-        </div>
-        <ul class="space-y-2">
-          <li>Dashboard</li>
-          <li>Automation</li>
-          <li>Order detail</li>
-          <li>Orders</li>
-          <li class="font-bold">Accounts</li>
-          <li>Products</li>
-          <li>Supplier</li>
-          <li>Purchase</li>
-          <li>1 Million</li>
-        </ul>
-      </div>
       <!-- Main Content -->
       <div class="w-4/5 p-4">
         <div class="flex justify-between mb-4">
           <div class="flex space-x-2">
-            <button class="px-3 py-1 bg-gray-200 rounded">Hide fields</button>
-            <button class="px-3 py-1 bg-gray-200 rounded">Filter</button>
-            <button class="px-3 py-1 bg-gray-200 rounded">Sort</button>
-            <button class="px-3 py-1 bg-gray-200 rounded">Group</button>
-            <button class="px-3 py-1 bg-gray-200 rounded">Color</button>
-          </div>
-          <div class="flex space-x-2">
-            <button class="px-3 py-1 bg-gray-200 rounded">Share</button>
-            <button class="px-3 py-1 bg-gray-200 rounded">Extensions</button>
-            <button class="px-3 py-1 bg-gray-200 rounded">API</button>
+            @components.Button("px-3 py-1 bg-gray-200 rounded", "Filter")
+            @components.Button("px-3 py-1 bg-gray-200 rounded", "Sort")
           </div>
         </div>
         <!-- Table -->
         <table id="data-table" class="w-full">
           <thead>
             <tr class="bg-gray-100">
-              <th class="p-2 text-left">Name</th>
-              <th class="p-2 text-left">Amount Chart</th>
-              <th class="p-2 text-left">Total money</th>
-              <th class="p-2 text-left">Platform</th>
-              <th class="p-2 text-left">Order times</th>
-              <th class="p-2 text-left">Regi</th>
+              for _, title := range sheet.Tittles {
+              <th class="p-2 text-left">{ title.Name }</th>
+              }
             </tr>
           </thead>
           <tbody>
+            //<td class="p-2 editable" contenteditable="true">example</td>
+            for _, row := range sheet.Rows {
             <tr>
-              <td class="p-2 editable" contenteditable="true">Maiya</td>
-              <td class="p-2 editable" contenteditable="true">[Chart Placeholder]</td>
-              <td class="p-2 editable" contenteditable="true">$407,300.00</td>
-              <td class="p-2 editable" contenteditable="true">
-                <span class="bg-orange-500 text-white px-2 py-1 rounded">Amazon</span>
+              for _, cell := range row.Cells {
+              <td id="data-cell" class="p-2 editable" contenteditable="true" hx-swap="none" hx-trigger="input"
+                hx-post="/api/cell" hx-vals={ fmt.Sprintf(`js:{value: getCellData(event), rowId:%d, cellId:%d,
+                sheetId:%d}`, row.ID, cell.ID, sheet.ID) }>
+                ${
+                fmt.Sprintf(" %v", cell.Value) }
               </td>
-              <td class="p-2 editable" contenteditable="true">23</td>
-              <td class="p-2 editable" contenteditable="true">2023-1</td>
+              }
             </tr>
+            }
             <!-- More rows will be added here by JavaScript -->
           </tbody>
         </table>
-        <button id="add-row" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Add Row</button>
+        <button hx-on:click="addNewRow()" id="add-row" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+          Add
+          Row
+        </button>
       </div>
     </div>
   </div>
 </div>
 <script>
-  const table = document.getElementById('data-table').getElementsByTagName('tbody')[0];
-  const addRowButton = document.getElementById('add-row');
-  const initialData = [
-    {name: 'John Doe', amountChart: '[Chart Placeholder]', totalMoney: '$123,456.78', platform: 'eBay', orderTimes: 15, regi: '2022-4'},
-    {name: 'Jane Smith', amountChart: '[Chart Placeholder]', totalMoney: '$654,321.00', platform: 'Etsy', orderTimes: 30, regi: '2023-2'}
-  ];
-
   function addRow(data) {
     const row = table.insertRow();
-    row.innerHTML = `
-        <td class="p-2 editable" contenteditable="true">${data.name}</td>
-        <td class="p-2 editable" contenteditable="true">${data.amountChart}</td>
-        <td class="p-2 editable" contenteditable="true">${data.totalMoney}</td>
-        <td class="p-2 editable" contenteditable="true"><span class="bg-orange-500 text-white px-2 py-1 rounded">${data.platform}</span></td>
-        <td class="p-2 editable" contenteditable="true">${data.orderTimes}</td>
-        <td class="p-2 editable" contenteditable="true">${data.regi}</td>
-      `;
-
-    // Add event listener to log changes
-    Array.from(row.getElementsByClassName('editable')).forEach(cell => {
-      cell.addEventListener('input', () => {
-        console.log('Data changed:', getTableData());
-      });
+    /*
+    
+                  <td class="p-2 editable" contenteditable="true" hx-swap="none" hx-post="/api/cell"
+                    hx-vals='{"cellData": ""}' oninput="updateCellData(this)" hx-vals='{"cellData": ""}'
+                    oninput="updateCellData(this)">
+                    ${
+                    fmt.Sprintf(" %v", cell.Value) }
+                  </td>
+    element.setAttribute('hx-vals', JSON.stringify({ cellData: cellData }))
+    */
+    Object.keys(data).forEach(key => {
+      const cell = row.insertCell();
+      cell.className = 'p-2 editable';
+      cell.contentEditable = 'true';
+      cell.setAttribute("hx-swap", "none");
+      cell.setAttribute("hx-post", "/api/cell")
+      cell.setAttribute("hx-vals", `{"cellData":""}`)
+      cell.setAttribute("hx-on:input", "updateCellData(this)")
+      cell.textContent = data[key];
     });
+
   }
 
-  function getTableData() {
-    const rows = table.getElementsByTagName('tr');
-    const data = [];
-    for (let i = 0; i < rows.length; i++) {
-      const cells = rows[i].getElementsByClassName('editable');
-      const row = {
-        name: cells[0].innerText,
-        amountChart: cells[1].innerText,
-        totalMoney: cells[2].innerText,
-        platform: cells[3].innerText,
-        orderTimes: parseInt(cells[4].innerText),
-        regi: cells[5].innerText,
-      };
-      data.push(row);
-    }
-    return data;
+  // get cell data
+  function getCellData(e) {
+    return e.target.innerText
   }
 
-  initialData.forEach(data => addRow(data));
-
-  addRowButton.addEventListener('click', () => {
+  // adding new row on the table
+  function addNewRow() {
     addRow({
       name: '',
-      amountChart: '[Chart Placeholder]',
+      amountChart: '',
       totalMoney: '',
       platform: '',
       orderTimes: '',
-      regi: ''
     });
-  });
+  }
 
-  // Add event listeners to initial rows
-  document.querySelectorAll('.editable').forEach(cell => {
-    cell.addEventListener('input', () => {
-      console.log('Data changed:', getTableData());
-    });
-  });
+  function calculateValue(e) {
+    return e.target.innerText
+  }
+
 </script>
 }

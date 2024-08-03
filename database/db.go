@@ -31,6 +31,9 @@ func ConnectDB(DBURL string) {
 		log.Println("error occured while migrating data: ", err)
 		os.Exit(-1)
 	}
+
+	// db.Create(&models.TestSheet)
+
 	log.Println("DB Connected SuccessFully")
 }
 

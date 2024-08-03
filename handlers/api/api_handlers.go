@@ -17,10 +17,21 @@ type NewSpreadSheetParams struct {
 	SheetName  string `json:"sheet" form:"sheetName"`
 }
 
+/*
+recieved:  [{"name":"John Doe","amountChart":"[Chart Placeholde","totalMoney":"$123,456.78","platform":"eBay","orderTimes":15,"regi":"2022-4"},{"name":"Jane Smith","amountChart":"[Chart Placeholder]","totalMoney":"$654,321.00","platform":"Etsy","orderTimes":30,"regi":"2023-2"}]
+
+*/
+
 // saves cell data as the cell changes
-func Save(app core.App) echo.HandlerFunc {
+func SaveSheetData(app core.App) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		b, err := io.ReadAll(c.Request().Body)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Println("recieved: ", string(b))
+		return c.JSON(http.StatusOK, map[string]string{"ok": "ok"})
 	}
 }
 
@@ -39,7 +50,7 @@ func CreateNewSpreadSheet(app core.App) echo.HandlerFunc {
 		if b, err := io.ReadAll(c.Request().Body); err == nil {
 			if err := json.Unmarshal(b, &sheet); err != nil {
 				fmt.Println("Error Unmarshaling: ", err)
-				return c.JSON(http.StatusBadRequest, map[string]string{"errir": "something went wrong"})
+				return c.JSON(http.StatusBadRequest, map[string]string{"error": "something went wrong"})
 			}
 		}
 
@@ -48,12 +59,31 @@ func CreateNewSpreadSheet(app core.App) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "something went wrong"})
 		}
 
-		return c.JSON(http.StatusOK, map[string]string{"errir": "something went wrong"})
+		return c.JSON(http.StatusOK, map[string]string{"error": "something went wrong"})
 	}
 }
 
 func DeleteSheet(app core.App) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		return nil
+	}
+}
+
+// saving cell data
+func SaveCellData(app core.App) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// sample data
+		type editCellParams struct {
+			CellValue string `json:"value" param:"value" query:"value" form:"value"`
+			Name      string `json:"name" param:"name" query:"name" form:"name"`
+			RowID     uint32 `json:"rowId" param:"rowId" query:"rowId" form:"rowId"`
+			CellID    uint32 `json:"cellId" param:"cellId" query:"cellId" form:"cellId"`
+			SheetID   uint32 `json:"sheetId" param:"sheetId" query:"sheetId" form:"sheetId"`
+		}
+
+		var value editCellParams
+		c.Bind(&value)
+		fmt.Println(value)
+		return c.JSON(http.StatusOK, map[string]string{"me": "you"})
 	}
 }
