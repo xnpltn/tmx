@@ -8,9 +8,9 @@ import (
 // Sheet represents a spreadsheet with a name, titles, and rows.
 type Sheet struct {
 	gorm.Model
-	Name    string  `json:"name" gorm:"type:varchar(100)"`
-	Tittles []Title `json:"titles" gorm:"foreignKey:SheetID"`
-	Rows    []Row   `json:"rows" gorm:"foreignKey:SheetID"`
+	Name   string  `json:"name" gorm:"type:varchar(100)"`
+	Titles []Title `json:"titles" gorm:"foreignKey:SheetID"`
+	Rows   []Row   `json:"rows" gorm:"foreignKey:SheetID"`
 }
 
 // Row represents a row in a spreadsheet, containing multiple cells.
@@ -52,9 +52,9 @@ type Cell struct {
 }
 
 var TestSheet = Sheet{
-	Name:    "hello",
-	Tittles: titles,
-	Rows:    []Row{row, row2},
+	Name:   "Sheet 2",
+	Titles: titles,
+	Rows:   []Row{row, row2},
 }
 
 var titles = []Title{

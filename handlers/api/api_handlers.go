@@ -12,15 +12,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type NewSpreadSheetParams struct {
-	Collection string `json:"collection" form:"collection"`
-	SheetName  string `json:"sheet" form:"sheetName"`
+type editCellParams struct {
+	CellValue string `json:"value" param:"value" query:"value" form:"value"`
+	Name      string `json:"name" param:"name" query:"name" form:"name"`
+	RowID     uint32 `json:"rowId" param:"rowId" query:"rowId" form:"rowId"`
+	CellID    uint32 `json:"cellId" param:"cellId" query:"cellId" form:"cellId"`
+	SheetID   uint32 `json:"sheetId" param:"sheetId" query:"sheetId" form:"sheetId"`
 }
-
-/*
-recieved:  [{"name":"John Doe","amountChart":"[Chart Placeholde","totalMoney":"$123,456.78","platform":"eBay","orderTimes":15,"regi":"2022-4"},{"name":"Jane Smith","amountChart":"[Chart Placeholder]","totalMoney":"$654,321.00","platform":"Etsy","orderTimes":30,"regi":"2023-2"}]
-
-*/
 
 // saves cell data as the cell changes
 func SaveSheetData(app core.App) echo.HandlerFunc {
@@ -69,21 +67,27 @@ func DeleteSheet(app core.App) echo.HandlerFunc {
 	}
 }
 
-// saving cell data
+// saving cell data, runns on every edit of the cell
 func SaveCellData(app core.App) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// sample data
-		type editCellParams struct {
-			CellValue string `json:"value" param:"value" query:"value" form:"value"`
-			Name      string `json:"name" param:"name" query:"name" form:"name"`
-			RowID     uint32 `json:"rowId" param:"rowId" query:"rowId" form:"rowId"`
-			CellID    uint32 `json:"cellId" param:"cellId" query:"cellId" form:"cellId"`
-			SheetID   uint32 `json:"sheetId" param:"sheetId" query:"sheetId" form:"sheetId"`
-		}
+		var params editCellParams
+		c.Bind(&params)
 
-		var value editCellParams
-		c.Bind(&value)
-		fmt.Println(value)
+		if params.CellID == 0 {
+			return c.JSON(http.StatusBadRequest, "error")
+		} else {
+			var cell models.Cell
+			app.DB().Where("id = ? AND row_id = ? ", params.CellID, params.RowID).First(&cell, params.CellID)
+			fmt.Println(cell.ID == uint(params.CellID))
+			cell.Value = params.CellValue
+			if res := app.DB().Save(&cell); res.Error != nil {
+				fmt.Println("error saving")
+				fmt.Println(res.Error)
+			} else {
+				fmt.Println("saved successfully")
+			}
+
+		}
 		return c.JSON(http.StatusOK, map[string]string{"me": "you"})
 	}
 }

@@ -21,8 +21,8 @@ templ EditView(sheet models.Sheet) {
           last modified: { fmt.Sprintf("%v ago",
           time.Since(sheet.UpdatedAt)) }
         </span>
-        <button class="px-3 py-1 bg-gray-200 rounded">Grid view</button>
-        <button class="px-3 py-1 bg-blue-500 text-white rounded">+</button>
+        @components.Button("px-3 py-1 bg-gray-200 rounded", "Grid View")
+        @components.Button("px-3 py-1 bg-blue-500 text-white rounded", "+")
       </div>
       <div class="flex items-center space-x-4">
         // <img src="avatar.jpg" alt="User Avatar" class="w-8 h-8 rounded-full" />
@@ -40,32 +40,18 @@ templ EditView(sheet models.Sheet) {
           </div>
         </div>
         <!-- Table -->
-        <table id="data-table" class="w-full">
-          <thead>
-            <tr class="bg-gray-100">
-              for _, title := range sheet.Tittles {
-              <th class="p-2 text-left">{ title.Name }</th>
-              }
-            </tr>
-          </thead>
-          <tbody>
-            //<td class="p-2 editable" contenteditable="true">example</td>
-            for _, row := range sheet.Rows {
-            <tr>
-              for _, cell := range row.Cells {
-              <td id="data-cell" class="p-2 editable" contenteditable="true" hx-swap="none" hx-trigger="input"
-                hx-post="/api/cell" hx-vals={ fmt.Sprintf(`js:{value: getCellData(event), rowId:%d, cellId:%d,
-                sheetId:%d}`, row.ID, cell.ID, sheet.ID) }>
-                ${
-                fmt.Sprintf(" %v", cell.Value) }
-              </td>
-              }
-            </tr>
-            }
-            <!-- More rows will be added here by JavaScript -->
-          </tbody>
-        </table>
-        <button hx-on:click="addNewRow()" id="add-row" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+        // templ.ComponentScript{``}
+        @components.Table(sheet)
+        /*
+        <button hx-post="/add-row" hx-trigger="click" hx-target="#table-body" hx-swap="beforeend"
+          hx-vals='{"sheetId":1}' hx-on:click={ templ.ComponentScript{Call: fmt.Sprintf("addNewRow(%d)",
+          len(sheet.Tittles))} } id="add-row" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+          Add
+          Row
+        </button>
+        */
+        <button hx-post="/add-row" hx-trigger="click" hx-target="#table-body" hx-swap="beforeend" hx-vals={
+          fmt.Sprintf(`{"sheetId":%d}`, sheet.ID) } id="add-row" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
           Add
           Row
         </button>
@@ -74,19 +60,11 @@ templ EditView(sheet models.Sheet) {
   </div>
 </div>
 <script>
-  function addRow(data) {
+
+  const table = document.getElementById('data-table').getElementsByTagName('tbody')[0];
+  function addNewRow(len) {
     const row = table.insertRow();
-    /*
-    
-                  <td class="p-2 editable" contenteditable="true" hx-swap="none" hx-post="/api/cell"
-                    hx-vals='{"cellData": ""}' oninput="updateCellData(this)" hx-vals='{"cellData": ""}'
-                    oninput="updateCellData(this)">
-                    ${
-                    fmt.Sprintf(" %v", cell.Value) }
-                  </td>
-    element.setAttribute('hx-vals', JSON.stringify({ cellData: cellData }))
-    */
-    Object.keys(data).forEach(key => {
+    for (let i = 0; i < len; i++) {
       const cell = row.insertCell();
       cell.className = 'p-2 editable';
       cell.contentEditable = 'true';
@@ -94,28 +72,12 @@ templ EditView(sheet models.Sheet) {
       cell.setAttribute("hx-post", "/api/cell")
       cell.setAttribute("hx-vals", `{"cellData":""}`)
       cell.setAttribute("hx-on:input", "updateCellData(this)")
-      cell.textContent = data[key];
-    });
+      cell.textContent = "";
 
+    }
   }
-
   // get cell data
   function getCellData(e) {
-    return e.target.innerText
-  }
-
-  // adding new row on the table
-  function addNewRow() {
-    addRow({
-      name: '',
-      amountChart: '',
-      totalMoney: '',
-      platform: '',
-      orderTimes: '',
-    });
-  }
-
-  function calculateValue(e) {
     return e.target.innerText
   }
 

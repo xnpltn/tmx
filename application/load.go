@@ -10,6 +10,7 @@ import (
 func loadUIRoutes(app core.App) {
 	app.Router().GET("/", handlers.HomePage(app))
 	app.Router().GET("/edit/:id", handlers.EditPage(app))
+	app.Router().POST("/add-row", handlers.AddNewRow(app))
 }
 
 func loadAPIRoutes(app core.App) {

@@ -4,6 +4,7 @@ import (
 "spreadsheet/spdb/ui/components"
 "spreadsheet/spdb/ui/components/forms"
 "spreadsheet/spdb/models"
+"fmt"
 )
 
 templ HomeView(sheets []models.Sheet) {
@@ -13,7 +14,8 @@ templ HomeView(sheets []models.Sheet) {
   <button type="button" class="text-lg rounded bg-blue-500 px-3 py-2 text-white" onclick="openModal()">Add</button>
 </div>
 */
-<div id="newSheetContainter">
+<div id="newSheetContainter" class="container">
+  <h2>Available workspaces : { fmt.Sprintf("%d", len(sheets) ) }</h2>
   <div class=" flex items-center justify-center gap-5 rounded bg-gray-200">
     for _, sheet := range sheets {
     @components.WorkspaceContainer(sheet)

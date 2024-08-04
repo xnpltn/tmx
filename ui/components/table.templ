@@ -1,0 +1,34 @@
+package components
+
+import (
+"spreadsheet/spdb/models"
+"fmt"
+)
+
+templ Table(sheet models.Sheet) {
+<table id="data-table" class="w-full">
+  <thead>
+    <tr class="bg-gray-100">
+      for _, title := range sheet.Titles {
+      <th class="p-2 text-left">{ title.Name }</th>
+      }
+    </tr>
+  </thead>
+  <tbody id="table-body">
+    //<td class="p-2 editable" contenteditable="true">example</td>
+    for _, row := range sheet.Rows {
+    <tr>
+      for _, cell := range row.Cells {
+      <td id="data-cell" class="p-2 editable" contenteditable="true" hx-swap="none" hx-trigger="input"
+        hx-post="/api/cell" hx-vals={ fmt.Sprintf("js:{value: getCellData(event), rowId:%d, cellId:%d, sheetId:%d}",
+        row.ID, cell.ID, sheet.ID) }>
+        ${
+        fmt.Sprintf(" %v", cell.Value) }
+      </td>
+      }
+    </tr>
+    }
+    <!-- More rows will be added here by JavaScript -->
+  </tbody>
+</table>
+}
