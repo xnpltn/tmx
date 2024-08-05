@@ -23,7 +23,7 @@ type Row struct {
 type Title struct {
 	gorm.Model
 	Name           string `json:"name"`
-	DataType       string
+	DataType       DataType
 	DataTypeString string `json:"dataType"`
 	SheetID        uint   `gorm:"not null"`
 }
@@ -51,6 +51,7 @@ type Cell struct {
 	RowID          uint     `gorm:"not null"`
 }
 
+// testing spreadsheet
 var TestSheet = Sheet{
 	Name:   "Sheet 2",
 	Titles: titles,

@@ -52,6 +52,47 @@ func CreateNewSpreadSheet(app core.App) echo.HandlerFunc {
 			}
 		}
 
+		fmt.Println(sheet.Titles)
+		/*
+
+			        <option value="Text">Text</option>
+			        <option value="CheckBox">CheckBox</option>
+			        <option value="Number">Number</option>
+			        <option value="Status">Status</option>
+			        <option value="Tag">Tag</option>
+			        <option value="Date">Date</option>
+			        <option value="Label">Label</option>
+
+			const (
+				Text DataType = iota
+				CheckBox
+				Status
+				Tag
+				Date
+				Number
+				Label
+			)
+		*/
+		for _, title := range sheet.Titles {
+			switch title.DataTypeString {
+			case "Text":
+				title.DataType = models.Text
+			case "CheckBox":
+				title.DataType = models.CheckBox
+			case "Number":
+				title.DataType = models.Number
+			case "Status":
+				title.DataType = models.Status
+			case "Tag":
+				title.DataType = models.Tag
+			case "Date":
+				title.DataType = models.Date
+			case "Label":
+				title.DataType = models.Label
+			default:
+				title.DataType = models.Text
+			}
+		}
 		if res := app.DB().Create(&sheet); res.Error != nil {
 			fmt.Println("error saving: ", res.Error)
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "something went wrong"})

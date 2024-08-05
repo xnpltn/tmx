@@ -1,0 +1,24 @@
+package forms
+
+import (
+"spreadsheet/spdb/models"
+"fmt"
+)
+
+templ SortDataForm(sheet models.Sheet) {
+<form class="bg-white p-2 rounded w-full max-w-sm" hx-post="/sort" hx-swap="none" hx-vals={ fmt.Sprintf(`"sheetId":%d`,
+  sheet.ID) }>
+  <h2 class="text-2xl font-bold mb-2">Sort Form</h2>
+  <div class="mb-1">
+    <label for="selection" class="block text-gray-700 font-medium mb-2">Filter By: </label>
+    <select id="selection" name="titleId" class="block w-full border border-gray-300 rounded p-1">
+      for _, title := range sheet.Titles {
+      <option value={ fmt.Sprintf("%d", title.ID) }>{ title.Name }</option>
+      }
+    </select>
+  </div>
+  <div class="mb-4">
+    <button type="submit" class="bg-blue-500 text-white p-1  rounded hover:bg-blue-600">Submit</button>
+  </div>
+</form>
+}

@@ -1,7 +1,7 @@
 package forms
 
 templ NewSheetForm() {
-<form id="sheet-form">
+<form id="sheet-form" hx-post="/api/test" hx-swap="none">
   <div class="mb-4">
     <label for="sheet-name" class="block text-gray-700">Sheet Name</label>
     <input type="text" id="sheet-name" name="sheet-name" class="w-full p-2 border rounded" required />
@@ -13,6 +13,7 @@ templ NewSheetForm() {
       <select name="titles[0][dataType]" class="w-full p-2 border rounded" required>
         <option value="Text">Text</option>
         <option value="CheckBox">CheckBox</option>
+        <option value="Number">Number</option>
         <option value="Status">Status</option>
         <option value="Tag">Tag</option>
         <option value="Date">Date</option>

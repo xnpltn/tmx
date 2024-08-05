@@ -3,6 +3,8 @@ package views
 import (
 "spreadsheet/spdb/models"
 "spreadsheet/spdb/ui/components"
+
+"spreadsheet/spdb/ui/components/forms"
 "fmt"
 "time"
 )
@@ -21,8 +23,7 @@ templ EditView(sheet models.Sheet) {
           last modified: { fmt.Sprintf("%v ago",
           time.Since(sheet.UpdatedAt)) }
         </span>
-        @components.Button("px-3 py-1 bg-gray-200 rounded", "Grid View")
-        @components.Button("px-3 py-1 bg-blue-500 text-white rounded", "+")
+        @components.Button("px-3 py-1 bg-blue-500 text-white rounded", "+", "")
       </div>
       <div class="flex items-center space-x-4">
         // <img src="avatar.jpg" alt="User Avatar" class="w-8 h-8 rounded-full" />
@@ -32,14 +33,22 @@ templ EditView(sheet models.Sheet) {
     <!-- Sidebar -->
     <div class="flex">
       <!-- Main Content -->
-      <div class="w-4/5 p-4">
+      <div class="w-4/5 p-4" x-data="{ openFilter: false, openSort:false }">
         <div class="flex justify-between mb-4">
           <div class="flex space-x-2">
-            @components.Button("px-3 py-1 bg-gray-200 rounded", "Filter")
-            @components.Button("px-3 py-1 bg-gray-200 rounded", "Sort")
+            @components.Button("px-3 py-1 bg-gray-200 rounded", "Filter", "openFilter")
+            @components.Button("px-3 py-1 bg-gray-200 rounded", "Sort", "openSort")
           </div>
         </div>
         <!-- Table -->
+        <div class="flex items-center justify-center">
+          <div class="bg-gray-200 p-3 rounde " x-show="openFilter">
+            filter
+          </div>
+          <div class="bg-gray-200 p-3 rounde " x-show="openSort">
+            @forms.SortDataForm(sheet)
+          </div>
+        </div>
         // templ.ComponentScript{``}
         @components.Table(sheet)
         /*
@@ -61,6 +70,7 @@ templ EditView(sheet models.Sheet) {
 </div>
 <script>
 
+  /*
   const table = document.getElementById('data-table').getElementsByTagName('tbody')[0];
   function addNewRow(len) {
     const row = table.insertRow();
@@ -76,6 +86,7 @@ templ EditView(sheet models.Sheet) {
 
     }
   }
+*/
   // get cell data
   function getCellData(e) {
     return e.target.innerText

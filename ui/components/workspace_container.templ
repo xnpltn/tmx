@@ -6,8 +6,11 @@ import (
 )
 
 templ WorkspaceContainer(sheet models.Sheet) {
-<a class="rounded p-5 bg-gray-100 shadow" href={ templ.URL(fmt.Sprintf("/edit/%d", sheet.ID)) }>
+//
+<a class="rounded p-5 bg-gray-100 shadow" hx-push-url="true" hx-target="#view" hx-get={
+  string(templ.URL(fmt.Sprintf("/edit/%d", sheet.ID))) }>
   { sheet.Name }
+  <br />
 </a>
 /*
 <a class="rounded p-5 bg-gray-100" hx-push-url="true" hx-target="#view" hx-get={ fmt.Sprintf("/edit/%d", sheet.ID) }>

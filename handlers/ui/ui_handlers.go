@@ -98,3 +98,25 @@ func AddNewRow(app core.App) echo.HandlerFunc {
 		return c.HTML(http.StatusOK, rowHTML)
 	}
 }
+
+func FilterData(app core.App) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		return nil
+	}
+}
+
+type sortDataParams struct {
+	SheetID int `json:"sheetId" form:"sheetId" query:"sheetId" param:"sheetId"`
+	TitleID int `json:"titleId" form:"titleId" query:"titleId" param:"titleId"`
+}
+
+func SortData(app core.App) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var params sortDataParams
+		c.Bind(&params)
+
+		var sheet models.Sheet
+		app.DB().Preload("Rows", "sheet_id = ? ORDER BY= ?", params.SheetID, params.TitleID).Preload("Rows.Cells").Preload("Titles", "sheet_id = ?", params.SheetID).First(&sheet, params.SheetID)
+		return c.JSON(http.StatusOK, map[string]string{"ok": "ok"})
+	}
+}

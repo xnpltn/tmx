@@ -1,6 +1,10 @@
 package components
 
-templ CreateNewModal() {
+import (
+"spreadsheet/spdb/models"
+)
+
+templ CreateNewModal(sheet models.Sheet) {
 <!-- Modal -->
 <div id="modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center">
   <div class="bg-white p-8 rounded-lg shadow-xl">

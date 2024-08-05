@@ -1,5 +1,9 @@
 package components
 
-templ Button(class string, text string) {
-<button class={ class }>{ text }</button>
+import (
+"fmt"
+)
+
+templ Button(class string, text string, alpineData string) {
+<button @click={ fmt.Sprintf(`%s=!%s`, alpineData, alpineData) } class={ class }>{ text }</button>
 }
